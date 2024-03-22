@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
 )
 
 type Parse struct {
@@ -75,11 +76,23 @@ func InitDisplayData(asciiArt, sysInform []string) DataDisPlay {
 	return data
 }
 
+func PrintInfo(asciiArt, sysInfor []string) {
+	data := InitDisplayData(asciiArt, sysInfor)
+	for _, row := range data {
+		fmt.Println(row[0], "\t", row[1])
+	}
+}
+
 func main() {
 	// Define flags
-	helpCmd := flag.NewFlagSet("list", flag.ExitOnError)
-	// Define subcommands
+
+	helpCmd := flag.NewFlagSet("help", flag.ExitOnError)
 	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
+	disableCmd := flag.NewFlagSet("disable", flag.ExitOnError)
+	asciiCmd := flag.NewFlagSet("ascii", flag.ExitOnError)
+	var asciiArtPath string
+	var disableInfo []string
+
 	// Parse command-line arguments
 	flag.Parse()
 	// Check the subcommand and execute the corresponding function
@@ -90,16 +103,33 @@ func main() {
 	case "help":
 		helpCmd.Parse(os.Args[2:])
 		showHelp()
-	default:
-		asciiArt, err := NewParse("ascii_art.txt")
-		if err != nil {
-			fmt.Printf("Error open file: %s\n", err.Error())
-			return
+	case "disable":
+		disableCmd.Parse(os.Args[2:])
+		disableInfo = disableCmd.Args()
+	case "ascii":
+		asciiCmd.Parse(os.Args[2:])
+		if len(asciiCmd.Args()) == 0 {
+			asciiArtPath = "./system/ascii_art/linux.txt"
+		} else {
+			asciiArtPath = asciiCmd.Args()[0]
 		}
-		sysInfor := system.System()
-		data := InitDisplayData(asciiArt.lines, sysInfor.List())
-		for _, row := range data {
-			fmt.Println(row[0], "\t", row[1])
+	default:
+		switch runtime.GOOS {
+		case "linux":
+			asciiArtPath = "./system/ascii_art/linux.txt"
+		case "macos":
+			asciiArtPath = "./system/ascii_art/linux.txt"
+		case "windows":
+			asciiArtPath = "./system/ascii_art/linux.txt"
+		default:
+			asciiArtPath = ""
 		}
 	}
+	sysInfor := system.System()
+	asciiArt, err := NewParse(asciiArtPath)
+	if err != nil {
+		fmt.Printf("Error open file: %s\n", err.Error())
+		return
+	}
+	PrintInfo(asciiArt.lines, sysInfor.GenInfoSys(disableInfo))
 }

@@ -3,6 +3,7 @@ package system
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
@@ -69,13 +70,15 @@ func (si *SystemInfor) getCPU() {
 }
 
 func (si *SystemInfor) getRam() {
-	si.RAM = fmt.Sprintf("%dGB", vmStat.Total/1024/1024/1024)
+	totalMemory := vmStat.Total / 1024 / 1024
+	usedMemory := vmStat.Used / 1024 / 1024
+	si.RAM = fmt.Sprintf("%d%s / %d%s", usedMemory, "MB", totalMemory, "MB")
 }
 
 func (si *SystemInfor) getDisk() {
-	totalDisk := diskStat.Total / 1024 / 1024 / 1024
-	usedDisk := diskStat.Used / 1024 / 1024 / 1024
-	si.Disk = fmt.Sprintf("%d%s / %d%s", usedDisk, "GB", totalDisk, "GB")
+	totalDisk := diskStat.Total / 1024 / 1024
+	usedDisk := diskStat.Used / 1024 / 1024
+	si.Disk = fmt.Sprintf("%d%s / %d%s", usedDisk, "MB", totalDisk, "MB")
 }
 
 func (si *SystemInfor) getUptime() {
@@ -96,19 +99,31 @@ func (si *SystemInfor) getHostName() {
 	si.Hostname = hostStat.Hostname
 }
 
-func (si *SystemInfor) List() []string {
+func (si *SystemInfor) GenInfoSys(disable []string) []string {
 	// We want to display by order
-	listSysInform := []string{}
-	listSysInform = append(listSysInform, si.User)
-	listSysInform = append(listSysInform, "-----------------------------------")
-	listSysInform = append(listSysInform, fmt.Sprintf("%s: %s", "Host", si.Hostname))
-	listSysInform = append(listSysInform, fmt.Sprintf("%s: %s", "Platform", si.Platform))
-	listSysInform = append(listSysInform, fmt.Sprintf("%s: %s", "Terminal", si.Terminal))
-	listSysInform = append(listSysInform, fmt.Sprintf("%s: %s", "Terminal Font", si.TerminalFont))
-	listSysInform = append(listSysInform, fmt.Sprintf("%s: %s", "CPU", si.CPU))
-	listSysInform = append(listSysInform, fmt.Sprintf("%s: %s", "Memory", si.RAM))
-	listSysInform = append(listSysInform, fmt.Sprintf("%s: %s", "Disk", si.Disk))
-	listSysInform = append(listSysInform, fmt.Sprintf("%s: %s", "Uptime", si.Uptime))
+	listSysInform := []string{
+		fmt.Sprint(si.User + "@" + si.Hostname),
+		"-----------------------------------",
+		fmt.Sprintf("%s: %s", "Host", si.Hostname[len(si.User)+1:]),
+		fmt.Sprintf("%s: %s", "Platform", si.Platform),
+		fmt.Sprintf("%s: %s", "Terminal", si.TerminalFont),
+		fmt.Sprintf("%s: %s", "CPU", si.CPU),
+		fmt.Sprintf("%s: %s", "Memory", si.RAM),
+		fmt.Sprintf("%s: %s", "Disk", si.Disk),
+		fmt.Sprintf("%s: %s", "Uptime", si.Uptime),
+	}
+
+	if len(disable) > 0 {
+		for _, typeInfo := range disable {
+			for index, str := range listSysInform {
+				findDisable := strings.Contains(strings.ToLower(str), typeInfo)
+				if findDisable {
+					listSysInform = append(listSysInform[:index], listSysInform[index+1:]...)
+				}
+			}
+		}
+	}
+
 	return listSysInform
 }
 
