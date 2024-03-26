@@ -76,10 +76,23 @@ func InitDisplayData(asciiArt, sysInform []string) DataDisPlay {
 	return data
 }
 
-func PrintInfo(asciiArt, sysInfor []string) {
+func DisplayInfor(asciiArt, sysInfor []string) {
 	data := InitDisplayData(asciiArt, sysInfor)
 	for _, row := range data {
 		fmt.Println(row[0], "\t", row[1])
+	}
+}
+
+func defaultArtSys() string {
+	switch runtime.GOOS {
+	case "linux":
+		return "./system/ascii_art/linux.txt"
+	case "darwin":
+		return "./system/ascii_art/linux.txt"
+	case "windows":
+		return "./system/ascii_art/linux.txt"
+	default:
+		return "./system/ascii_art/default.txt"
 	}
 }
 
@@ -92,7 +105,6 @@ func main() {
 	asciiCmd := flag.NewFlagSet("ascii", flag.ExitOnError)
 	var asciiArtPath string
 	var disableInfo []string
-
 	// Parse command-line arguments
 	flag.Parse()
 	// Check the subcommand and execute the corresponding function
@@ -109,21 +121,12 @@ func main() {
 	case "ascii":
 		asciiCmd.Parse(os.Args[2:])
 		if len(asciiCmd.Args()) == 0 {
-			asciiArtPath = "./system/ascii_art/linux.txt"
+			asciiArtPath = defaultArtSys()
 		} else {
 			asciiArtPath = asciiCmd.Args()[0]
 		}
 	default:
-		switch runtime.GOOS {
-		case "linux":
-			asciiArtPath = "./system/ascii_art/linux.txt"
-		case "macos":
-			asciiArtPath = "./system/ascii_art/linux.txt"
-		case "windows":
-			asciiArtPath = "./system/ascii_art/linux.txt"
-		default:
-			asciiArtPath = ""
-		}
+		asciiArtPath = defaultArtSys()
 	}
 	sysInfor := system.System()
 	asciiArt, err := NewParse(asciiArtPath)
@@ -131,5 +134,5 @@ func main() {
 		fmt.Printf("Error open file: %s\n", err.Error())
 		return
 	}
-	PrintInfo(asciiArt.lines, sysInfor.GenInfoSys(disableInfo))
+	DisplayInfor(asciiArt.lines, sysInfor.PrintInfo(disableInfo))
 }
