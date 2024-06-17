@@ -283,7 +283,7 @@ func (si SystemInfor) getResolution() string {
 			return ""
 		}
 		resolutions := removeEmptyString(strings.Split(cmd, "\n"))
-		return resolutions[len(resolutions)-1]
+		return strings.Join(resolutions, ", ")
 	case "darwin":
 	case "windows":
 	}
@@ -327,15 +327,8 @@ func (si SystemInfor) getIcons() string {
 	return strings.Trim(cmd, "\n")
 }
 
-// func (si SystemInfor) getDE() string {
-// 	return ""
-// }
-
-//	func (si SystemInfor) getWM() string {
-//		return ""
-//	}
 func (si SystemInfor) formatInfo(label, info string) string {
-	return fmt.Sprintf("%s: %s", label, info)
+	return fmt.Sprintf("%s%s%s: %s", "\033[31m", label, "\033[0m", info)
 }
 
 func (si SystemInfor) PrintInfo(disable []string) []string {

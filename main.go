@@ -7,6 +7,18 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"strings"
+)
+
+const (
+	Reset  = "\033[0m"
+	Red    = "\033[31m"
+	Green  = "\033[32m"
+	Yellow = "\033[33m"
+	Blue   = "\033[34m"
+	Purple = "\033[35m"
+	Cyan   = "\033[36m"
+	White  = "\033[37m"
 )
 
 type Parse struct {
@@ -39,15 +51,11 @@ func NewParse(filePath string) (*Parse, error) {
 		return nil, err
 	}
 
-	red := "\033[91m"
-	reset := "\033[0m"
-
 	scanner := bufio.NewScanner(file)
 	lines := []string{}
 	for scanner.Scan() {
-		lines = append(lines, fmt.Sprintf("%s%s%s", red, scanner.Text(), reset))
+		lines = append(lines, strings.Trim(scanner.Text(), ""))
 	}
-
 	return &Parse{
 		lines: lines,
 	}, nil
@@ -55,31 +63,40 @@ func NewParse(filePath string) (*Parse, error) {
 
 type DataDisPlay [][]string
 
-func InitDisplayData(asciiArt, sysInform []string) DataDisPlay {
+func InitDisplayData(asciiArt Parse, sysInform []string) DataDisPlay {
 	var data [][]string
 	// Calculate the maximum number of lines between ascii and sysInform
-	maxLines := max(len(asciiArt), len(sysInform))
-
+	maxLines := max(len(asciiArt.lines), len(sysInform))
 	// Append ASCII art and sysInform to data
 	for i := 0; i < maxLines; i++ {
 		asciiLine, sysInformLine := "", ""
 
-		if i < len(asciiArt) {
-			asciiLine = asciiArt[i]
+		if i < len(asciiArt.lines) {
+			asciiArt.lines[i] = strings.ReplaceAll(asciiArt.lines[i], `${c1}`, Red)
+			asciiArt.lines[i] = strings.ReplaceAll(asciiArt.lines[i], `${c2}`, Blue)
+			asciiLine = asciiArt.lines[i]
 		}
-
 		if i < len(sysInform) {
 			sysInformLine = sysInform[i]
 		}
+
 		data = append(data, []string{asciiLine, sysInformLine})
 	}
 	return data
 }
 
-func DisplayInfor(asciiArt, sysInfor []string) {
+func DisplayInfor(asciiArt Parse, sysInfor []string) {
 	data := InitDisplayData(asciiArt, sysInfor)
-	for _, row := range data {
-		fmt.Println(row[0], "\t", row[1])
+	// Print the table
+	for i := 0; i < len(data); i++ {
+		// Left-align the image column (fixed width)
+		// image := data[i][0]
+
+		// Left-align the text column
+		text := fmt.Sprintf("%20s", data[i][1])
+		fmt.Println("||", text)
+		// Print each row of the table
+		// fmt.Printf("%s | %s\n", image, text)
 	}
 }
 
@@ -124,6 +141,7 @@ func main() {
 			asciiArtPath = defaultArtSys()
 		} else {
 			asciiArtPath = asciiCmd.Args()[0]
+			fmt.Println(asciiArtPath)
 		}
 	default:
 		asciiArtPath = defaultArtSys()
@@ -134,5 +152,5 @@ func main() {
 		fmt.Printf("Error open file: %s\n", err.Error())
 		return
 	}
-	DisplayInfor(asciiArt.lines, sysInfor.PrintInfo(disableInfo))
+	DisplayInfor(*asciiArt, sysInfor.PrintInfo(disableInfo))
 }
