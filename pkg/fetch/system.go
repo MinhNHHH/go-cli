@@ -1,7 +1,8 @@
-package system
+package fetch
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -108,13 +109,13 @@ func getTerminal() string {
 	return os.Getenv("TERM_PROGRAM")
 }
 
-func getCPU() (CPUInfor, error) {
+func getCPU() CPUInfor {
 	cpuStat, err := cpu.Info()
 	if err != nil {
-		return CPUInfor{}, fmt.Errorf("error when getting cpu information: %s", err.Error())
+		log.Fatalf("error when getting cpu information: %s", err.Error())
 	}
 	if len(cpuStat) == 0 {
-		return CPUInfor{}, fmt.Errorf("can not get cpu information")
+		log.Fatalf("can not get cpu information")
 	}
 	cpuInfor := CPUInfor{
 		VendorId:  cpuStat[0].VendorID,
@@ -123,13 +124,13 @@ func getCPU() (CPUInfor, error) {
 		Mhz:       cpuStat[0].Mhz,
 		CacheSize: cpuStat[0].CacheSize,
 	}
-	return cpuInfor, nil
+	return cpuInfor
 }
 
-func getVM() (VMInfor, error) {
+func getVM() VMInfor {
 	vmStat, err := mem.VirtualMemory()
 	if err != nil {
-		return VMInfor{}, fmt.Errorf("error when getting vm information: %s", err.Error())
+		log.Fatalf("error when getting vm information: %s", err.Error())
 	}
 	vmInfor := VMInfor{
 		Total:       vmStat.Total,
@@ -140,13 +141,13 @@ func getVM() (VMInfor, error) {
 		Active:      vmStat.Active,
 		Inactive:    vmStat.Inactive,
 	}
-	return vmInfor, nil
+	return vmInfor
 }
 
-func getDisk() (DiskInfo, error) {
+func getDisk() DiskInfo {
 	diskStat, err := disk.Usage("/") // If you're in Unix change this "\\" for "/"
 	if err != nil {
-		return DiskInfo{}, fmt.Errorf("error when getting disk information: %s", err.Error())
+		log.Fatalf("error when getting disk information: %s", err.Error())
 	}
 	diskInfor := DiskInfo{
 		Total:       diskStat.Total,
@@ -155,29 +156,29 @@ func getDisk() (DiskInfo, error) {
 		Free:        diskStat.Free,
 	}
 
-	return diskInfor, nil
+	return diskInfor
 }
 
-func getGPUInfo() (GPUInfo, error) {
+func getGPUInfo() GPUInfo {
 	gpu, err := ghw.GPU()
 	if err != nil {
-		return GPUInfo{}, fmt.Errorf("error when getting gpu information: %s", err.Error())
+		log.Fatalf("error when getting gpu information: %s", err.Error())
 	}
 	if len(gpu.GraphicsCards) == 0 {
-		return GPUInfo{}, fmt.Errorf("cannot get gpu information")
+		log.Fatalf("cannot get gpu information")
 	}
 	gpuInfor := GPUInfo{
 		ProductName: gpu.GraphicsCards[0].DeviceInfo.Product.Name,
 		VendorName:  gpu.GraphicsCards[0].DeviceInfo.Vendor.Name,
 	}
 
-	return gpuInfor, nil
+	return gpuInfor
 }
 
-func getHostName() (HostNameInfor, error) {
+func getHostName() HostNameInfor {
 	hostStat, err := host.Info()
 	if err != nil {
-		return HostNameInfor{}, fmt.Errorf("error when getting hostname information: %s", err.Error())
+		log.Fatalf("error when getting hostname information: %s", err.Error())
 	}
 	hostName := HostNameInfor{
 		HostName:        hostStat.Hostname,
@@ -191,10 +192,10 @@ func getHostName() (HostNameInfor, error) {
 		KernelVersion:   hostStat.KernelVersion,
 		KernelArch:      hostStat.KernelArch,
 	}
-	return hostName, nil
+	return hostName
 }
 
-func (si SystemInfor) getUptime() string {
+func (si SystemInfor) GetUptime() string {
 	uptime := si.HostName.UpTime
 	days, hours, mins := uptimeToDaysHoursMins(uptime)
 
@@ -207,23 +208,23 @@ func (si SystemInfor) getUptime() string {
 	}
 }
 
-func (si SystemInfor) getHost() string {
+func (si SystemInfor) GetHost() string {
 	return si.HostName.HostName
 }
 
-func (si SystemInfor) getOS() string {
+func (si SystemInfor) GetOS() string {
 	return si.HostName.OS
 }
 
-func (si SystemInfor) getKernelVersion() string {
+func (si SystemInfor) GetKernelVersion() string {
 	return si.HostName.KernelVersion
 }
 
-func (si SystemInfor) getCpu() string {
+func (si SystemInfor) GetCpu() string {
 	return si.Cpu.ModelName
 }
 
-func (si SystemInfor) getGpu() string {
+func (si SystemInfor) GetGpu() string {
 	return si.Gpu.ProductName
 }
 
@@ -242,11 +243,11 @@ func execLinuxCmd(command string) (string, error) {
 	return outputStr, nil
 }
 
-func (si SystemInfor) getMemmory() string {
+func (si SystemInfor) GetMemmory() string {
 	return fmt.Sprintf("%dMB / %dMB", si.Vm.Used/1024/1024, si.Vm.Total/1024/1024)
 }
 
-func (si SystemInfor) getPackages() string {
+func (si SystemInfor) GetPackages() string {
 	switch si.HostName.OS {
 	case "linux":
 		packages, err := execLinuxCmd("dpkg --list")
@@ -274,7 +275,7 @@ func (si SystemInfor) getPackages() string {
 	return ""
 }
 
-func (si SystemInfor) getResolution() string {
+func (si SystemInfor) GetResolution() string {
 	switch si.HostName.OS {
 	case "linux":
 		cmd, err := execLinuxCmd("xrandr | grep '*' | awk '{print $1}'")
@@ -290,7 +291,7 @@ func (si SystemInfor) getResolution() string {
 	return ""
 }
 
-func (si SystemInfor) getShell() string {
+func (si SystemInfor) GetShell() string {
 	switch si.HostName.OS {
 	case "linux":
 		shell := getShell()
@@ -309,7 +310,7 @@ func (si SystemInfor) getShell() string {
 // 	return ""
 // }
 
-func (si SystemInfor) getTheme() string {
+func (si SystemInfor) GetTheme() string {
 	cmd, err := execLinuxCmd("gsettings get org.gnome.desktop.interface gtk-theme")
 	if err != nil {
 		fmt.Printf("err: %s", err)
@@ -318,7 +319,7 @@ func (si SystemInfor) getTheme() string {
 	return strings.Trim(cmd, "\n")
 }
 
-func (si SystemInfor) getIcons() string {
+func (si SystemInfor) GetIcons() string {
 	cmd, err := execLinuxCmd("gsettings get org.gnome.desktop.interface icon-theme")
 	if err != nil {
 		fmt.Printf("err: %s", err)
@@ -331,47 +332,38 @@ func (si SystemInfor) formatInfo(label, info string) string {
 	return fmt.Sprintf("%s%s%s: %s", "\033[31m", label, "\033[0m", info)
 }
 
-func (si SystemInfor) PrintInfo(disable []string) []string {
+func (si SystemInfor) ListSysInfor(disable []string) []string {
 	// We want to display by order
 	listSysInform := []string{
-		fmt.Sprint(si.User + "@" + si.getHost()),
+		fmt.Sprint(si.User + "@" + si.GetHost()),
 		"-----------------------------------",
-		si.formatInfo("OS", si.getOS()),
-		si.formatInfo("Host", si.getHost()),
-		si.formatInfo("Kernel", si.getKernelVersion()),
-		si.formatInfo("Uptime", si.getUptime()),
-		si.formatInfo("Packages", si.getPackages()),
-		si.formatInfo("Shell", si.getShell()),
-		si.formatInfo("Resolution", si.getResolution()),
-		si.formatInfo("Theme", si.getTheme()),
-		si.formatInfo("Icons", si.getIcons()),
-		si.formatInfo("Terminal", si.getUptime()),
-		si.formatInfo("CPU", si.getCpu()),
-		si.formatInfo("GPU", si.getGpu()),
-		si.formatInfo("Memory", si.getMemmory()),
+		si.formatInfo("OS", si.GetOS()),
+		si.formatInfo("Host", si.GetHost()),
+		si.formatInfo("Kernel", si.GetKernelVersion()),
+		si.formatInfo("Uptime", si.GetUptime()),
+		si.formatInfo("Packages", si.GetPackages()),
+		si.formatInfo("Shell", si.GetShell()),
+		si.formatInfo("Resolution", si.GetResolution()),
+		si.formatInfo("Theme", si.GetTheme()),
+		si.formatInfo("Icons", si.GetIcons()),
+		si.formatInfo("Terminal", si.GetUptime()),
+		si.formatInfo("CPU", si.GetCpu()),
+		si.formatInfo("GPU", si.GetGpu()),
+		si.formatInfo("Memory", si.GetMemmory()),
 	}
 	return listSysInform
 }
 
-func System() SystemInfor {
-	user := getUser()
-	terminal := getTerminal()
-	hostName, _ := getHostName()
-	cpuInfo, _ := getCPU()
-	gpuInfo, _ := getGPUInfo()
-	diskInfo, _ := getDisk()
-	vmInfo, _ := getVM()
-
-	info := SystemInfor{
-		User:     user,
-		Terminal: terminal,
-		HostName: hostName,
-		Cpu:      cpuInfo,
-		Vm:       vmInfo,
-		Disk:     diskInfo,
-		Gpu:      gpuInfo,
+func NewSysInfor() SystemInfor {
+	return SystemInfor{
+		User:     getUser(),
+		Terminal: getTerminal(),
+		HostName: getHostName(),
+		Cpu:      getCPU(),
+		Vm:       getVM(),
+		Disk:     getDisk(),
+		Gpu:      getGPUInfo(),
 	}
-	return info
 }
 
 //

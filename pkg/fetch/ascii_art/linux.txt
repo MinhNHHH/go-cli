@@ -13,7 +13,7 @@ ossy${c2}NMMMNyMMh${c1}sssssssssssssshmmmhssssssso
 .ssssssss${c2}dMMMNh${c1}ssssssssss${c2}hNMMM${c1}dssssssss.
  /ssssssss${c2}hNMM${c1}Myh${c2}hyyyyhdNMMMNh${c1}ssssssss/
   +sssssssss${c2}d${c1}myd${c2}MMMMMMMMddddy${c1}ssssssss+
-   /sssssssssssh${c2}dmNNNNmyNMMMMh$${c1}ssssss/
+   /sssssssssssh${c2}dmNNNNmyNMMMMh${c1}ssssss/
     .ossssssssssssssssss${c2}dMMMN$${c1}ysssso.
       -+sssssssssssssssssyyyssss+-
         `:+ssssssssssssssssss+:`
