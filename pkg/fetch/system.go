@@ -306,10 +306,6 @@ func (si SystemInfor) GetShell() string {
 	return ""
 }
 
-// func (si SystemInfor) getTerminal() string {
-// 	return ""
-// }
-
 func (si SystemInfor) GetTheme() string {
 	cmd, err := execLinuxCmd("gsettings get org.gnome.desktop.interface gtk-theme")
 	if err != nil {
@@ -329,13 +325,13 @@ func (si SystemInfor) GetIcons() string {
 }
 
 func (si SystemInfor) formatInfo(label, info string) string {
-	return fmt.Sprintf("%s%s%s: %s", "\033[31m", label, "\033[0m", info)
+	return fmt.Sprintf("%s%s: %s", label, placeHolder["${c0}"], info)
 }
 
-func (si SystemInfor) ListSysInfor(disable []string) []string {
+func (si SystemInfor) ListSysInfor(disable, seemore []string) []string {
 	// We want to display by order
 	listSysInform := []string{
-		fmt.Sprint(si.User + "@" + si.GetHost()),
+		fmt.Sprintf(si.User + "@" + si.GetHost()),
 		"-----------------------------------",
 		si.formatInfo("OS", si.GetOS()),
 		si.formatInfo("Host", si.GetHost()),
@@ -351,6 +347,18 @@ func (si SystemInfor) ListSysInfor(disable []string) []string {
 		si.formatInfo("GPU", si.GetGpu()),
 		si.formatInfo("Memory", si.GetMemmory()),
 	}
+
+	if len(disable) > 0 {
+		for _, typeInfo := range disable {
+			for index, str := range listSysInform {
+				findDisable := strings.Contains(strings.ToLower(str), typeInfo)
+				if findDisable {
+					listSysInform = append(listSysInform[:index], listSysInform[index+1:]...)
+				}
+			}
+		}
+	}
+
 	return listSysInform
 }
 

@@ -1,20 +1,20 @@
-            .-/+oossssoo+/-.
-        `:+ssssssssssssssssss+:`
-      -+ssssssssssssssssssyyssss+-
-    .ossssssssssssssssss${c2}dMMMNy${c1}sssso.
-   /sssssssssss${c2}hdmmNNmmyNMMMMh${c1}ssssss/
-  +sssssssss${c2}h${c1}myd${c2}MMMMMMMNdddd${c1}yssssssss+
- /ssssssssh${c2}NMM${c1}Myh${c2}hyyyyhmNMMMNh${c1}ssssssss/
-.ssssssss${c2}dMMMNh${c1}ssssssssss${c2}hNMMMd${c1}ssssssss.
-+ssss${c2}hhhyNMMNy${c1}ssssssssssss${c2}yNMMM${c1}ysssssss+
-ossy${c2}NMMMNyMMh${c1}sssssssssssssshmmmhssssssso
-ossy${c2}NMMMNyMMh${c1}sssssssssssssshmmmhssssssso
-+ssss${c2}hhhyNMMNy${c1}ssssssssssss${c2}yNMMM${c1}ysssssss+
-.ssssssss${c2}dMMMNh${c1}ssssssssss${c2}hNMMM${c1}dssssssss.
- /ssssssss${c2}hNMM${c1}Myh${c2}hyyyyhdNMMMNh${c1}ssssssss/
-  +sssssssss${c2}d${c1}myd${c2}MMMMMMMMddddy${c1}ssssssss+
-   /sssssssssssh${c2}dmNNNNmyNMMMMh${c1}ssssss/
-    .ossssssssssssssssss${c2}dMMMN$${c1}ysssso.
-      -+sssssssssssssssssyyyssss+-
-        `:+ssssssssssssssssss+:`
-            .-/+oossssoo+/-.
+            ${c1}.-/+oossssoo+/-.
+        ${c1}":+ssssssssssssssssss+:"
+      ${c1}-+ssssssssssssssssssyyssss+-
+    ${c1}.ossssssssssssssssss${c7}dMMMNy${c1}sssso.
+   ${c1}/sssssssssss${c7}hdmmNNmmyNMMMMh${c1}ssssss/
+  ${c1}+sssssssss${c7}h${c1}myd${c7}MMMMMMMNdddd${c1}yssssssss+
+ ${c1}/ssssssssh${c7}NMM${c1}Myh${c7}hyyyyhmNMMMNh${c1}ssssssss/
+${c1}.ssssssss${c7}dMMMNh${c1}ssssssssss${c7}hNMMMd${c1}ssssssss.
+${c1}+ssss${c7}hhhyNMMNy${c1}ssssssssssss${c7}yNMMM${c1}ysssssss+
+${c1}ossy${c7}NMMMNyMMh${c1}sssssssssssssshmmmhssssssso
+${c1}ossy${c7}NMMMNyMMh${c1}sssssssssssssshmmmhssssssso
+${c1}+ssss${c7}hhhyNMMNy${c1}ssssssssssss${c7}yNMMM${c1}ysssssss+
+${c1}.ssssssss${c7}dMMMNh${c1}ssssssssss${c7}hNMMM${c1}dssssssss.
+ ${c1}/ssssssss${c7}hNMM${c1}Myh${c7}hyyyyhdNMMMNh${c1}ssssssss/
+  ${c1}+sssssssss${c7}d${c1}myd${c7}MMMMMMMMddddy${c1}ssssssss+
+   ${c1}/sssssssssssh${c7}dmNNNNmyNMMMMh${c1}ssssss/
+    ${c1}.ossssssssssssssssss${c7}dMMMN$${c1}ysssso.
+      ${c1}-+sssssssssssssssssyyyssss+-
+        ${c1}":+ssssssssssssssssss+:"
+            ${c1}.-/+oossssoo+/-.
